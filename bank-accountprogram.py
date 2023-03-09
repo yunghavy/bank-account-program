@@ -9,7 +9,7 @@ import smtplib
 class Account:
     bank_code = 1000
 
-    def __init__(self, balance, accno, name, branch, status, email=None, phone=None):
+    def __init__(self, balance, accno, name, branch, status, email, phone):
         
         if balance < 0:
             print("Balance cannot be zero")
@@ -57,8 +57,8 @@ class Account:
                 print("Thank you for depositing with us")
                 print(f'Your previous balance was {self.check_balance()}')
                 self.balance = self.balance + cash_deposit
-                self.send_notification(f"Dear {self.name}, your account has been credited with KES {cash_deposit}.")
                 print(f'Your current balance is {self.balance}')
+                self.send_notification(f"Dear {self.name}, your account has been credited with KES {cash_deposit}.")
 
             else:
                 print("Your account is inactive")
@@ -84,8 +84,8 @@ class Account:
                 print("Transaction was successful")
                 print("Amount withdrawn is {}".format(cash_withdraw))
                 self.balance = self.balance - cash_withdraw
-                self.send_notification(f"Dear {self.name}, your account has been debited with KES {cash_withdraw}. Your current balance is KES {self.balance}.")
                 print("Your balance is {}".format(self.balance))
+                self.send_notification(f"Dear {self.name}, your account has been debited with KES {cash_withdraw}. Your current balance is KES {self.balance}.")
                 return self.balance
             else:
                 print("Please visit the nearest branch near you")
@@ -129,6 +129,7 @@ class Account:
             print("Account branch updated successfully!")
 
     def interest_earned(self, rate):
+        interest_rate = 0.05
         interest = self.balance * rate / 100
         print(f"Interest earned on balance of {self.balance} at {rate}% is {interest}")
     
@@ -138,6 +139,14 @@ class Account:
         print(f"Branch: {self.branch}")
         print(f"Balance: {self.balance}")
         print(f"Status: {self.status}")
+        print(f"Email: {self.email}")
+        print(f"Phone: {self.phone}")
+    
+    def close_account(self):
+        self.balance = 0
+        self.status = "closed"
+        self.email = None
+        self.phone = None
 
 account1 = Account(1000, "12345678910", "Washington", "Ngara", "active")
 account1.display_details()
