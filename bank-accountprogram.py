@@ -60,33 +60,27 @@ class Account:
             else:
                 print("Please visit the nearest branch near you")
     
-    def transfer_money(self, recipient, amount):
-        if self.status == "inactive":
-            print("Sorry, you have an inactive account!")
-        elif amount <= 0:
+    def transfer(self, recipient_account, amount):
+        if amount <= 0:
             print("Cannot transfer zero or negative amount")
         elif amount > self.balance:
             print("You have insufficient balance")
-        elif recipient.status == "inactive":
-            print("Sorry, the recipient has an inactive account!")
         else:
-            print("Transaction was successful")
-            print(f"You have transferred {amount} to {recipient.name}")
-            self.balance = self.balance - amount
-            recipient.balance = recipient.balance + amount
-            print(f"Your balance is {self.balance}")
-            return self.balance
+            self.balance -= amount
+            recipient_account.balance += amount
+            print(f"Transfer of KES {amount} successful to account {recipient_account.accno}")
+            print(f"Your new balance is {self.balance}")
+    def calculate_interest(self, rate):
+        interest = self.balance * rate /100
+        print(f"Interest earned is KES {interest:2f}")
 
 account1 = Account(1000, "12345678910", "Washington", "Ngara", "active")
-account2 = Account(5000, "01928374650", "John", "Kasarani", "active")
-
 account1.check_balance()
-account2.check_balance()
-
-account1.transfer_money(account2, 500)
-
-account1.check_balance()
-account2.check_balance()
+account1.deposit(1500)
+account1.withdraw()
+account2 = Account(500, "10987654321", "Adams", "Westlands", "active")
+account1.transfer(account2, 500)
+account1.calculate_interest(5)
 
 account1.deposit(1500)
 account1.withdraw()
