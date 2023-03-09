@@ -1,0 +1,4 @@
+Implement a feature to send a notification to the user's email or phone number when a transaction is made or the account balance falls below a certain threshold.
+Add a method to close the account and delete it from the bank's records.
+Create a transaction history to allow the user to view their past transactions.
+Implement a feature to set up automatic recurring transfers, such as monthly bill payments or savings transfers.
