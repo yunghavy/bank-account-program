@@ -12,13 +12,11 @@ class Account:
     def __init__(self, balance, accno, name, branch, status, email, phone):
         
         if balance < 0:
-            print("Balance cannot be zero")
+            raise ValueError("Balance cannot be negative")
         elif len(name) == 0:
-            print("Please enter your name")
+            raise ValueError("Please enter your name")
         elif len(accno) != 11:
-            print("Invalid account number")
-        elif not isinstance(status, str) or status not in ["active", "inactive"]:
-            print("Invalid account status")
+            raise ValueError("Invalid account number")
         else:
             print("Bank details captured")
             self.balance = balance
@@ -28,6 +26,7 @@ class Account:
             self.status = status
             self.email = email
             self.phone = phone
+            self.transactions = []
 
     def send_notification(self, message):
         if self.email:
@@ -44,21 +43,25 @@ class Account:
 
 
     def check_balance(self):
-        print(f'You balance is {self.balance}')
+        print(f'Your balance is {self.balance}')
         return self.balance
 
     def deposit(self, cash_deposit):
         if cash_deposit <= 0:
-            print("Cannot deposit zero or negative amount")
+            raise ValueError("Cannot deposit zero or negative amount")
         elif cash_deposit > 100000:
-            print("You have exceeded the maximum deposit amount")
+            raise ValueError("You have exceeded the maximum deposit amount")
         else:
             if self.status == "active":
                 print("Thank you for depositing with us")
                 print(f'Your previous balance was {self.check_balance()}')
-                self.balance = self.balance + cash_deposit
+                self.balance += cash_deposit
+                self.transaction_history.append({"type": "deposit", "amount": cash_deposit})
                 print(f'Your current balance is {self.balance}')
-                self.send_notification(f"Dear {self.name}, your account has been credited with KES {cash_deposit}.")
+
+                # Send notification if balance falls below threshold
+                if self.balance < 500:
+                    self.send_notification("Your account balance is below 500")
 
             else:
                 print("Your account is inactive")
@@ -84,8 +87,15 @@ class Account:
                 print("Transaction was successful")
                 print("Amount withdrawn is {}".format(cash_withdraw))
                 self.balance = self.balance - cash_withdraw
+                self.transaction_history.append({"type": "withdrawal", "amount": cash_withdraw})
                 print("Your balance is {}".format(self.balance))
-                self.send_notification(f"Dear {self.name}, your account has been debited with KES {cash_withdraw}. Your current balance is KES {self.balance}.")
+
+                # Send notification if balance falls below threshold
+                if self.balance < 500:
+                    self.send_notification("Your account balance is below 500")
+
+                    self.send_notification(f"Dear {self.name}, your account has been debited with KES {cash_withdraw}. Your current balance is KES {self.balance}.")
+                
                 return self.balance
             else:
                 print("Please visit the nearest branch near you")
@@ -115,17 +125,24 @@ class Account:
             print("Transaction was successful.")
             self.balance -= amount
             recipient.balance += amount
+            self.transaction_history.append(
+                {"transaction_type": "transfer",
+                 "amount": amount,
+                 "recipient_name": recipient,
+                }
+            )
             print(f"Your new balance is {self.balance}")
+            self.transactions.append({"type": "transfer", "amount": amount, "recipient": recipient.accno})
             return self.balance
         else:
             print("One or both accounts are inactive.")
 
-    def change_details(self, name=None, branch=None):
-        if name:
-            self.name = name
+    def change_details(self, new_name=None, new_branch=None):
+        if new_name is not None:
+            self.name = new_name
             print("Account name updated successfully!")
-        if branch:
-            self.branch = branch
+        if new_branch is not None:
+            self.branch = new_branch
             print("Account branch updated successfully!")
 
     def interest_earned(self, rate):
@@ -147,6 +164,15 @@ class Account:
         self.status = "closed"
         self.email = None
         self.phone = None
+        del self
+    
+    def transaction_history(self):
+        if len(self.transactions) == 0:
+            print("No transactions found")
+        else:
+            print("Transaction history:")
+            for transaction in self.transactions:
+                print(f"{transaction['type']} of {transaction['amount']}")
 
 account1 = Account(1000, "12345678910", "Washington", "Ngara", "active")
 account1.display_details()
