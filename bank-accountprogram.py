@@ -70,11 +70,20 @@ class Account:
             recipient_account.balance += amount
             print(f"Transfer of KES {amount} successful to account {recipient_account.accno}")
             print(f"Your new balance is {self.balance}")
+
     def calculate_interest(self, rate):
         interest = self.balance * rate /100
         print(f"Interest earned is KES {interest:2f}")
+    
+    def display_details(self):
+        print("Account details:")
+        print(f"Account number: {self.accno}")
+        print(f"Name: {self.name}")
+        print(f"Branch: {self.branch}")
+        print(f"Balance: {self.balance}")
 
 account1 = Account(1000, "12345678910", "Washington", "Ngara", "active")
+account1.display_details()
 account1.check_balance()
 account1.deposit(1500)
 account1.withdraw()
