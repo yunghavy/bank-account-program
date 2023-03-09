@@ -14,6 +14,8 @@ class Account:
             print("Please enter your name")
         elif len(accno) != 11:
             print("Invalid account number")
+        elif not isinstance(status, str) or status not in ["active", "inactive"]:
+            print("Invalid account status")
         else:
             print("Bank details captured")
             self.balance = balance
@@ -40,6 +42,7 @@ class Account:
 
             else:
                 print("Your account is inactive")
+        
 
     def withdraw(self):
         initial_deposit = 1000
@@ -60,16 +63,35 @@ class Account:
             else:
                 print("Please visit the nearest branch near you")
     
-    def transfer(self, recipient_account, amount):
+    def transfer(self, amount, recipient):
+        if not isinstance(amount, (int, float)):
+            print("Invalid input: Amount should be numeric.")
+            return
+
         if amount <= 0:
-            print("Cannot transfer zero or negative amount")
-        elif amount > self.balance:
-            print("You have insufficient balance")
-        else:
+            print("Invalid input: Amount should be positive.")
+            return
+
+        if len(recipient.accno) != 11:
+            print("Invalid input: Invalid account number for recipient.")
+            return
+
+        if self.status == "inactive":
+            print("Sorry, you have an inactive account!")
+            return
+
+        if self.balance < amount:
+            print("You have insufficient balance.")
+            return
+
+        if self.status == "active" and recipient.status == "active":
+            print("Transaction was successful.")
             self.balance -= amount
-            recipient_account.balance += amount
-            print(f"Transfer of KES {amount} successful to account {recipient_account.accno}")
+            recipient.balance += amount
             print(f"Your new balance is {self.balance}")
+            return self.balance
+        else:
+            print("One or both accounts are inactive.")
 
     def calculate_interest(self, rate):
         interest = self.balance * rate /100
